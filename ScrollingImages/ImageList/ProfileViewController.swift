@@ -1,9 +1,12 @@
 import UIKit
+import PhotosUI
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, PHPickerViewControllerDelegate {
+    
     private var label: UILabel!
     
     let imageView = UIImageView()
+    let setProfileImage = UIButton()
     
     let nameLabel = UILabel()
     let userName = UILabel()
@@ -11,7 +14,8 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        profileImage()
+        // profileImage()
+        setUpProfileImage()
         
         setProfileName()
         setUserName()
@@ -19,6 +23,7 @@ final class ProfileViewController: UIViewController {
         exitButton()
     }
     
+    /*
     func profileImage(){
         imageView.image = UIImage(systemName: "person.crop.circle.fill")
         imageView.tintColor = .ypGray
@@ -32,7 +37,57 @@ final class ProfileViewController: UIViewController {
         imageView.safeAreaLayoutGuide.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 32).isActive = true
         imageView.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
     }
+    */
     
+    func setUpProfileImage(){
+        let img = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
+        setProfileImage.setImage(img, for: .normal)
+        
+        setProfileImage.tintColor = .ypGray
+        setProfileImage.addTarget(self, action: #selector(didTapPhotoButton), for: .touchUpInside)
+        
+        setProfileImage.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(setProfileImage)
+        
+        setProfileImage.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        setProfileImage.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        setProfileImage.imageView?.contentMode = .scaleAspectFill
+        
+        setProfileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32
+        ).isActive = true
+
+        setProfileImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16
+        ).isActive = true
+        
+        setProfileImage.layer.cornerRadius = 35
+        setProfileImage.clipsToBounds = true
+    }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+
+        guard let result = results.first else { return }
+
+        result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
+            guard let image = object as? UIImage else { return }
+
+            DispatchQueue.main.async {
+                self?.setProfileImage.setImage(image, for: .normal)
+            }
+        }
+    }
+    
+    @objc
+    private func didTapPhotoButton() {
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        configuration.selectionLimit = 1
+
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+
+        present(picker, animated: true)
+    }
     
     func setProfileName(){
         nameLabel.text = "My Name"
@@ -43,7 +98,7 @@ final class ProfileViewController: UIViewController {
         self.view.addSubview(nameLabel)
         
         nameLabel.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
-        nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
+        nameLabel.topAnchor.constraint(equalTo: setProfileImage.bottomAnchor, constant: 8).isActive = true
     }
     
     func setUserName(){
@@ -84,7 +139,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(exitButton)
         
         exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24).isActive = true
-        exitButton.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        exitButton.centerYAnchor.constraint(equalTo: setProfileImage.centerYAnchor).isActive = true
     }
         
     @objc
@@ -92,8 +147,15 @@ final class ProfileViewController: UIViewController {
         for view in view.subviews {
             if view is UILabel {
                 view.removeFromSuperview()
+                resetImageButton()
             }
         }
+    }
+    
+    private func resetImageButton(){
+        let img = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
+        setProfileImage.setImage(img, for: .normal)
+        setProfileImage.tintColor = .ypGray
     }
 }
 
