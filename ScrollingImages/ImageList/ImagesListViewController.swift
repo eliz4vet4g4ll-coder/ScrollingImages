@@ -1,7 +1,7 @@
 import UIKit
 
 class ImagesListViewController: UIViewController {
-
+    private let showSingleImageSegueIdentifier = "ShowSingleImage"
     @IBOutlet private var tableView: UITableView!
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
@@ -18,20 +18,6 @@ class ImagesListViewController: UIViewController {
         return formatter
     }()
     
-    
-    func configCell(for cell: ImageListCell, with indexPath: IndexPath){
-        let photoName = photosName[indexPath.row]
-        guard let image = UIImage(named: photoName) else {return}
-        cell.imgLabel.image = image
-        
-        cell.dateLabel.text = dateFormatter.string(from: Date())
-        
-        if indexPath.row % 2 == 0{
-            cell.setLike(isLike: true)
-        }else{cell.setLike(isLike: false)}
-    }
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,6 +25,23 @@ class ImagesListViewController: UIViewController {
         
         // tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 12, right: 0)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == showSingleImageSegueIdentifier {
+            guard
+                let viewController = segue.destination as? SingleImageViewController,
+                let indexPath = sender as? IndexPath
+            else {
+                assertionFailure("Invalid segue destination")
+                return
+            }
+
+            let image = UIImage(named: photosName[indexPath.row])
+            viewController.image = image
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
     }
 }
 
@@ -60,11 +63,30 @@ extension ImagesListViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photosName.count // отвечает за кол-во фоток
     }
-    
-    
+}
+
+extension ImagesListViewController {
+    func configCell(for cell: ImageListCell, with indexPath: IndexPath){
+        // фото
+        let photoName = photosName[indexPath.row]
+        guard let image = UIImage(named: photoName) else {return}
+        cell.imgLabel.image = image
+        
+        // дата лейбл
+        cell.dateLabel.text = dateFormatter.string(from: Date())
+        
+        // лайк
+        if indexPath.row % 2 == 0{
+            cell.setLike(isLike: true)
+        }else{cell.setLike(isLike: false)}
+    }
+}
+
+
+extension ImagesListViewController {
     // Этот метод отвечает за действия, которые будут выполнены при тапе по ячейке таблицы
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
     }
     
     // метод для вычисления высоты ячейки по картинке
@@ -74,6 +96,4 @@ extension ImagesListViewController: UITableViewDataSource, UITableViewDelegate{
         let imageHeight = (imageWidht * image.self.size.height) / image.self.size.width
         return imageHeight + 8
     }
-    
-    
 }
