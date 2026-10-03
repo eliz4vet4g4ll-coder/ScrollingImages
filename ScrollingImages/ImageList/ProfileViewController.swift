@@ -14,7 +14,6 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // profileImage()
         setUpProfileImage()
         
         setProfileName()
@@ -22,26 +21,11 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         setProfileInfo()
         exitButton()
     }
-    
-    /*
-    func profileImage(){
-        imageView.image = UIImage(systemName: "person.crop.circle.fill")
-        imageView.tintColor = .ypGray
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(imageView)
-        
-        imageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        
-        imageView.safeAreaLayoutGuide.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 32).isActive = true
-        imageView.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
-    }
-    */
+
     
     func setUpProfileImage(){
-        let img = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
-        setProfileImage.setImage(img, for: .normal)
+        let image = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
+        setProfileImage.setImage(image, for: .normal)
         
         setProfileImage.tintColor = .ypGray
         setProfileImage.addTarget(self, action: #selector(didTapPhotoButton), for: .touchUpInside)
