@@ -9,8 +9,12 @@ struct OAuthTokenResponseBody: Decodable{
 }
 
 final class OAuth2Service{
+    static let shared = OAuth2Service()
+    private init() {}
+    
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
+            print("Failed to create URLComponents")
             return nil
         }
         
@@ -23,6 +27,7 @@ final class OAuth2Service{
         ]
         
         guard let authTokenUrl = urlComponents.url else {
+            print("Failed to create URL")
             return nil
         }
         
@@ -33,6 +38,7 @@ final class OAuth2Service{
     
     func fetchOAuthToken(code: String,completion: @escaping (Result<String, Error>) -> Void){
         guard let request = makeOAuthTokenRequest(code: code) else {
+            print("Failed to create OAuth token request")
             return
         }
         

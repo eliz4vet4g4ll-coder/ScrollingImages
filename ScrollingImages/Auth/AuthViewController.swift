@@ -6,7 +6,7 @@ protocol AuthViewControllerDelegate: AnyObject {
     
 final class AuthViewController: UIViewController{
     weak var delegate: AuthViewControllerDelegate?
-    private let oauth2Service = OAuth2Service()
+    private let oauth2Service = OAuth2Service.shared
 
     private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
@@ -41,7 +41,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
         
         oauth2Service.fetchOAuthToken(code: code) { result in
             switch result {
-            case .success:
+            case .success(let token):
+                let storage = OAuth2TokenStorage()
+                storage.token = token
                 self.delegate?.didAuthenticate(self)
                 
             case .failure(let error):
