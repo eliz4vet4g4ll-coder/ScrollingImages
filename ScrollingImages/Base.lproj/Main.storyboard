@@ -117,8 +117,17 @@
                     <view key="view" contentMode="scaleToFill" id="Ala-Sx-V53">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="startLogo" translatesAutoresizingMaskIntoConstraints="NO" id="bpC-8D-kkR">
+                                <rect key="frame" x="170.5" y="410.5" width="73" height="75.5"/>
+                            </imageView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="4Fn-Ql-iRu"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" name="YPBlack"/>
+                        <constraints>
+                            <constraint firstItem="bpC-8D-kkR" firstAttribute="centerY" secondItem="Ala-Sx-V53" secondAttribute="centerY" id="HfM-I3-eQp"/>
+                            <constraint firstItem="bpC-8D-kkR" firstAttribute="centerX" secondItem="Ala-Sx-V53" secondAttribute="centerX" id="L3x-Lc-yJ8"/>
+                        </constraints>
                     </view>
                     <connections>
                         <segue destination="Zet-EA-PjV" kind="presentation" identifier="ShowAuthenticationScreen" modalPresentationStyle="fullScreen" id="lC4-Ne-kbq"/>
@@ -335,6 +344,7 @@
         <image name="Image" width="60" height="60"/>
         <image name="ProfileSectionActive" width="30" height="30"/>
         <image name="ShareButton" width="50" height="50"/>
+        <image name="startLogo" width="73" height="75.5"/>
         <namedColor name="YP Background">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
