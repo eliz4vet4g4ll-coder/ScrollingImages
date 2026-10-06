@@ -38,7 +38,15 @@ final class OAuth2Service{
     
     func fetchOAuthToken(code: String,completion: @escaping (Result<String, Error>) -> Void){
         guard let request = makeOAuthTokenRequest(code: code) else {
-            print("Failed to create OAuth token request")
+            let error = NSError(
+                domain: "OAuth2Service",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to create URLRequest"]
+            )
+            print("Failed to create URLRequest")
+            DispatchQueue.main.async {
+                completion(.failure(error))
+            }
             return
         }
         
@@ -53,7 +61,18 @@ final class OAuth2Service{
             }
             
             // Проверяем HTTP-ответ
-            guard let response = response as? HTTPURLResponse else {return}
+            guard let response = response as? HTTPURLResponse else {
+                let error = NSError(
+                    domain: "OAuth2Service",
+                    code: 0,
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP response"]
+                )
+                print("Invalid HTTP response")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
             
             // Проверяем статус-код
             guard 200..<300 ~= response.statusCode else {
@@ -63,7 +82,18 @@ final class OAuth2Service{
                 return
             }
             
-            guard let data = data else {return}
+            guard let data = data else {
+                let error = NSError(
+                    domain: "OAuth2Service",
+                    code: 0,
+                    userInfo: [NSLocalizedDescriptionKey: "Response data is missing"]
+                )
+                print("Response data is missing")
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
             
             do {
                 let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
