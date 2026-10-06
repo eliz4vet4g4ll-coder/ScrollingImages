@@ -33,7 +33,7 @@ class ImagesListViewController: UIViewController {
                 let viewController = segue.destination as? SingleImageViewController,
                 let indexPath = sender as? IndexPath
             else {
-                assertionFailure("Invalid segue destination")
+                print("Invalid segue destination")
                 return
             }
 
@@ -77,8 +77,14 @@ extension ImagesListViewController {
         
         // лайк
         if indexPath.row % 2 == 0{
-            cell.setLike(isLike: true)
-        }else{cell.setLike(isLike: false)}
+            cell.setLike(
+                    isLike: true
+                )
+        }else{
+            cell.setLike(
+                isLike: false
+            )
+        }
     }
 }
 
