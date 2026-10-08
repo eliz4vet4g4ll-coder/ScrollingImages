@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 struct UserResult: Codable {
     let profileImage: ProfileImage
@@ -13,10 +14,11 @@ struct UserResult: Codable {
 }
 
 final class ProfileImageService{
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ProfileImageService")
     static let shared = ProfileImageService()
     private init() {}
     
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange") // имя по которому узнаем, что URL аватарки получен
+    static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange") // имя по которому узнаем, что URL аватарки получен
     private(set) var avatarURL: String?
      
     private var task: URLSessionTask?
@@ -27,13 +29,13 @@ final class ProfileImageService{
         task?.cancel()
  
         guard let request = makeProfileImageRequest(username: username) else {
-            print("[ProfileImageService.fetchProfileImageURL]: failed to create request")
+            logger.error("[ProfileImageService.fetchProfileImageURL]: failed to create request")
             completion(.failure(URLError(.badURL)))
             return
         }
  
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
-            guard let self = self else { return }
+            guard let self else { return }
  
             switch result {
             case .success(let userResult):
@@ -48,7 +50,7 @@ final class ProfileImageService{
                     userInfo: ["URL": profileImageURL]
                 )
             case .failure(let error):
-                print("[ProfileImageService.fetchProfileImageURL]: \(type(of: error)) - \(error), username: \(username)")
+                logger.error("[ProfileImageService.fetchProfileImageURL]: \(type(of: error)) - \(error), username: \(username)")
                 completion(.failure(error))
             }
             self.task = nil
@@ -60,14 +62,14 @@ final class ProfileImageService{
      
     private func makeProfileImageRequest(username: String) -> URLRequest? {
         guard
-            let token = OAuth2TokenStorage().token,
+            let token = OAuth2TokenStorage.shared.token,
             let url = URL(string: "https://api.unsplash.com/users/\(username)")
         else {
             return nil
         }
  
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }

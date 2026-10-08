@@ -7,7 +7,7 @@ final class ProfileLogoutService {
     private init() {}
 
     func logout() {
-        OAuth2TokenStorage().token = nil
+        OAuth2TokenStorage.shared.token = nil
         cleanCookies()
         switchToAuthScreen()
     }
@@ -32,7 +32,7 @@ final class ProfileLogoutService {
 
     private func switchToAuthScreen() {
         guard
-            let window = keyWindow(),
+            let window = UIApplication.shared.currentKeyWindow,
             let authViewController = UIStoryboard(name: "Main", bundle: .main)
                 .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
         else {
@@ -43,18 +43,11 @@ final class ProfileLogoutService {
 
         window.rootViewController = UINavigationController(rootViewController: authViewController)
     }
-
-    private func keyWindow() -> UIWindow? {
-        UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .flatMap({ $0.windows })
-            .first(where: { $0.isKeyWindow })
-    }
 }
 
 extension ProfileLogoutService: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
         // После входа сплэш загрузит профиль и переключит на ленту
-        keyWindow()?.rootViewController = SplashViewController()
+        UIApplication.shared.currentKeyWindow?.rootViewController = SplashViewController()
     }
 }

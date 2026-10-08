@@ -3,7 +3,7 @@ import UIKit
 
 final class SplashViewController: UIViewController{
     private let profileService = ProfileService.shared
-    private let storage = OAuth2TokenStorage()
+    private let storage = OAuth2TokenStorage.shared
     private var isFetchingProfile = false
 
     override func viewDidLoad() {
@@ -25,7 +25,7 @@ final class SplashViewController: UIViewController{
         view.backgroundColor = .ypBlack
 
         let logoImageView = UIImageView()
-        logoImageView.image = UIImage(named: "logo")
+        logoImageView.image = UIImage(resource: .logo)
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoImageView)
 
@@ -80,7 +80,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         profileService.fetchProfile(token) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
 
-            guard let self = self else { return }
+            guard let self else { return }
             self.isFetchingProfile = false
 
             switch result {

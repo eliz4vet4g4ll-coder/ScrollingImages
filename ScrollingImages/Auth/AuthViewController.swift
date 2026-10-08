@@ -10,8 +10,8 @@ final class AuthViewController: UIViewController{
     private let oauth2Service = OAuth2Service.shared
 
     private func configureBackButton() {
-        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
+        navigationController?.navigationBar.backIndicatorImage = UIImage(resource: .navBackButton)
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(resource: .navBackButton)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = .ypBackground
     }
@@ -61,7 +61,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
 
             switch result {
             case .success(let token):
-                let storage = OAuth2TokenStorage()
+                let storage = OAuth2TokenStorage.shared
                 storage.token = token
                 self.delegate?.didAuthenticate(self)
 
