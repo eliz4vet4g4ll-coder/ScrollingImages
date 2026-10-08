@@ -33,7 +33,7 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.updateAvatar()
             }
         updateAvatar()
@@ -45,12 +45,12 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
             let url = URL(string: profileImageURL)
         else { return }
 
-        let placeholder = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
+        let placeholder = UIImage(systemName: SystemImages.personCropCircleFill, withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
         setProfileImage.kf.setImage(with: url, for: .normal, placeholder: placeholder)
     }
     
     func setUpProfileImage(){
-        let image = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
+        let image = UIImage(systemName: SystemImages.personCropCircleFill, withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
         setProfileImage.setImage(image, for: .normal)
         
         setProfileImage.tintColor = .ypGray
@@ -141,7 +141,7 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         
     func exitButton(){
         let exitButton = UIButton.systemButton(
-            with: UIImage(systemName: "ipad.and.arrow.forward")!,
+            with: UIImage(systemName: SystemImages.ipadAndArrowForward)!,
             target: self,
             action: #selector(self.didTapButton)
         )

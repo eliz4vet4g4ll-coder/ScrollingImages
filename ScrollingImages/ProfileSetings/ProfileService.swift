@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 struct Profile{
     let username: String
@@ -22,6 +23,7 @@ struct ProfileResult: Codable {
 }
 
 final class ProfileService {
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ProfileService")
      static let shared = ProfileService()
      private init() {} //делаем синглтаном
 
@@ -35,13 +37,13 @@ final class ProfileService {
          task?.cancel()
 
          guard let request = makeProfileRequest(token: token) else {
-             print("[ProfileService.fetchProfile]: failed to create request")
+             logger.error("[ProfileService.fetchProfile]: failed to create request")
              completion(.failure(URLError(.badURL)))
              return
          }
 
      let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
-         guard let self = self else { return }
+         guard let self else { return }
          
          switch result {
          case .success(let profileResult):
@@ -61,7 +63,7 @@ final class ProfileService {
                 completion(.success(profile))
              
             case .failure(let error):
-                print("[ProfileService.fetchProfile]: \(type(of: error)) - \(error)")
+                logger.error("[ProfileService.fetchProfile]: \(type(of: error)) - \(error)")
                 completion(.failure(error))
             }
             self.task = nil
@@ -76,7 +78,7 @@ final class ProfileService {
          }
 
          var request = URLRequest(url: url)
-         request.httpMethod = "GET"
+         request.httpMethod = HTTPMethod.get.rawValue
          request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
          return request
      }

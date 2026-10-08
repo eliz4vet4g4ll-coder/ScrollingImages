@@ -24,8 +24,8 @@ final class ImageListCell: UITableViewCell{
     }()
 
     func setLike(isLike: Bool){
-        let likeStatus = isLike ? "FavouriteActive" : "FavouriteNotActive"
-        setLikeButton.setImage(UIImage(named: likeStatus), for: .normal)
+        let likeStatus: ImageResource = isLike ? .favouriteActive : .favouriteNotActive
+        setLikeButton.setImage(UIImage(resource: likeStatus), for: .normal)
     }
     
     override func awakeFromNib() {
