@@ -8,7 +8,15 @@ struct OAuthTokenResponseBody: Decodable{
     }
 }
 
+enum AuthServiceError: Error {
+    case invalidRequest
+}
+
 final class OAuth2Service{
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    
     static let shared = OAuth2Service()
     private init() {}
     
@@ -36,79 +44,41 @@ final class OAuth2Service{
         return request
     }
     
-    func fetchOAuthToken(code: String,completion: @escaping (Result<String, Error>) -> Void){
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void){
+        
+        assert(Thread.isMainThread)
+        guard lastCode != code else {
+            print("[OAuth2Service.fetchOAuthToken]: AuthServiceError - повторный запрос с тем же code: \(code)")
+            completion(.failure(AuthServiceError.invalidRequest))
+            return
+        }
+        task?.cancel()
+        lastCode = code
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
-            let error = NSError(
-                domain: "OAuth2Service",
-                code: 0,
-                userInfo: [NSLocalizedDescriptionKey: "Failed to create URLRequest"]
-            )
-            print("Failed to create URLRequest")
-            DispatchQueue.main.async {
-                completion(.failure(error))
-            }
+            print("[OAuth2Service.fetchOAuthToken]: AuthServiceError - не удалось создать запрос, code: \(code)")
+            completion(.failure(AuthServiceError.invalidRequest))
             return
         }
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            // Проверяем сетевую ошибку
-
-            if let error = error {
-                print("Network error: \(error)")
-                DispatchQueue.main.async {completion(.failure(error))
-                }
-                return
+        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let body):
+                completion(.success(body.accessToken))
+            case .failure(let error):
+                print("[OAuth2Service.fetchOAuthToken]: \(type(of: error)) - \(error), code: \(code)")
+                completion(.failure(error))
             }
             
-            // Проверяем HTTP-ответ
-            guard let response = response as? HTTPURLResponse else {
-                let error = NSError(
-                    domain: "OAuth2Service",
-                    code: 0,
-                    userInfo: [NSLocalizedDescriptionKey: "Invalid HTTP response"]
-                )
-                print("Invalid HTTP response")
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-                return
+            // Отменённая старая задача не должна сбрасывать состояние новой
+            if self.lastCode == code {
+                self.task = nil
+                self.lastCode = nil
             }
-            
-            // Проверяем статус-код
-            guard 200..<300 ~= response.statusCode else {
-                let error = NetworkError.httpStatusCode(response.statusCode)
-                print("Unsplash error: \(error)")
-                DispatchQueue.main.async {completion(.failure(error))}
-                return
-            }
-            
-            guard let data = data else {
-                let error = NSError(
-                    domain: "OAuth2Service",
-                    code: 0,
-                    userInfo: [NSLocalizedDescriptionKey: "Response data is missing"]
-                )
-                print("Response data is missing")
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-                return
-            }
-            
-            do {
-                let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                
-                DispatchQueue.main.async{
-                    completion(.success(responseBody.accessToken))
-                }
-            }
-            catch {
-                print("Decoding error: \(error)")
-                
-                DispatchQueue.main.async {
-                    completion(.failure(error))
-                }
-            }
-        }.resume()
+        }
+        self.task = task
+        task.resume()
     }
 }
