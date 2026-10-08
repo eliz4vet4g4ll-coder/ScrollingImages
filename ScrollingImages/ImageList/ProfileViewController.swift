@@ -1,7 +1,10 @@
 import UIKit
 import PhotosUI
+import Kingfisher
 
 final class ProfileViewController: UIViewController, PHPickerViewControllerDelegate {
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     private var label: UILabel!
     
@@ -14,14 +17,37 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .ypBlack
         setUpProfileImage()
         
         setProfileName()
         setUserName()
         setProfileInfo()
         exitButton()
+        
+        if let profile = profileService.profile {updateProfileDetails(profile: profile)}
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
     }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
 
+        let placeholder = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
+        setProfileImage.kf.setImage(with: url, for: .normal, placeholder: placeholder)
+    }
     
     func setUpProfileImage(){
         let image = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
@@ -36,6 +62,8 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         setProfileImage.heightAnchor.constraint(equalToConstant: 70).isActive = true
         setProfileImage.widthAnchor.constraint(equalToConstant: 70).isActive = true
         setProfileImage.imageView?.contentMode = .scaleAspectFill
+        setProfileImage.contentHorizontalAlignment = .fill
+        setProfileImage.contentVerticalAlignment = .fill
         
         setProfileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32
         ).isActive = true
@@ -128,18 +156,23 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         
     @objc
     private func didTapButton() {
-        for view in view.subviews {
-            if view is UILabel {
-                view.removeFromSuperview()
-                resetImageButton()
-            }
-        }
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Да", style: .default) { _ in
+            ProfileLogoutService.shared.logout()
+        })
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+        present(alert, animated: true)
     }
     
-    private func resetImageButton(){
-        let img = UIImage(systemName: "person.crop.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
-        setProfileImage.setImage(img, for: .normal)
-        setProfileImage.tintColor = .ypGray
+    // записывает данные в лейблы
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        userName.text = profile.loginName
+        profileInfo.text = profile.bio
     }
 }
 
