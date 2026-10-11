@@ -54,11 +54,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true) // Закрыли WebView
 
-        UIBlockingProgressHUD.show()
-
         oauth2Service.fetchOAuthToken(code: code) { result in
-            UIBlockingProgressHUD.dismiss()
-
             switch result {
             case .success(let token):
                 let storage = OAuth2TokenStorage.shared
