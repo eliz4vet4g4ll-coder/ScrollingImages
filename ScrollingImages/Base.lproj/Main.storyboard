@@ -164,7 +164,7 @@
                                                         <attributedString key="attributedTitle"/>
                                                     </buttonConfiguration>
                                                     <connections>
-                                                        <action selector="likeButton:" destination="pdQ-m2-VGD" eventType="touchUpInside" id="HUS-Ta-kFh"/>
+                                                        <action selector="likeButtonClicked" destination="pdQ-m2-VGD" eventType="touchUpInside" id="HUS-Ta-kFh"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -185,7 +185,7 @@
                                         <connections>
                                             <outlet property="dateLabel" destination="JRI-6l-oSL" id="Sae-No-rTK"/>
                                             <outlet property="imgLabel" destination="qVE-RG-Ndq" id="TYE-Ev-5PG"/>
-                                            <outlet property="setLikeButton" destination="JAc-Pg-s6S" id="QGD-ga-zcP"/>
+                                            <outlet property="likeButton" destination="JAc-Pg-s6S" id="QGD-ga-zcP"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
