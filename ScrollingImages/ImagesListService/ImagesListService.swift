@@ -1,7 +1,6 @@
 import UIKit
 import os
 
-// ссылки на одно фото в разных размерах (часть ответа сервера)
 struct UrlsResult: Decodable {
     let raw: String
     let full: String
@@ -10,7 +9,6 @@ struct UrlsResult: Decodable {
     let thumb: String
 }
 
-// одно фото в том виде, в каком оно приходит с сервера Unsplash
 struct PhotoResult: Decodable {
     let id: String
     let createdAt: String?
@@ -21,7 +19,6 @@ struct PhotoResult: Decodable {
     let description: String?
     let urls: UrlsResult
 
-    // сопоставляем имена полей JSON (snake_case) с свойствами
     enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"
@@ -34,7 +31,6 @@ struct PhotoResult: Decodable {
     }
 }
 
-// модель фото, удобная для показа в UI
 struct Photo {
     let id: String
     let size: CGSize
@@ -47,11 +43,8 @@ struct Photo {
 
 // создание Photo из ответа сервера
 extension Photo {
-    // форматтер для дат вида 2016-05-03T11:00:28-04:00
     private static let dateFormatter = ISO8601DateFormatter()
 
-    // переводим PhotoResult в Photo: размер в CGSize, строку даты в Date,
-    // берём thumb для ленты и full для полноэкранного просмотра
     init(from photoResult: PhotoResult) {
         self.init(
             id: photoResult.id,
@@ -75,14 +68,13 @@ final class ImagesListService {
     private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
 
-    // текущий запрос (nil — ничего не загружается)
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
 
     // загрузка следующей страницы фото
     func fetchPhotosNextPage() {
         assert(Thread.isMainThread)
-        // Запрос уже идёт — не прерываем его и не создаём новый
+
         guard task == nil else { return }
 
         // номер страницы, которую грузим (первая — 1)
@@ -130,7 +122,6 @@ final class ImagesListService {
             return
         }
 
-        // data(for:) проверяет код 200..<300 и вызывает completion на главном потоке
         let task = urlSession.data(for: request) { [weak self] result in
             guard let self else { return }
 
