@@ -21,7 +21,6 @@ struct PhotoResult: Decodable {
     let description: String?
     let urls: UrlsResult
 
-    // сопоставляем имена полей JSON (snake_case) с свойствами
     enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"
@@ -47,11 +46,9 @@ struct Photo {
 
 // создание Photo из ответа сервера
 extension Photo {
-    // форматтер для дат вида 2016-05-03T11:00:28-04:00
     private static let dateFormatter = ISO8601DateFormatter()
 
-    // переводим PhotoResult в Photo: размер в CGSize, строку даты в Date,
-    // берём thumb для ленты и full для полноэкранного просмотра
+    // создание Photo из ответа сервера
     init(from photoResult: PhotoResult) {
         self.init(
             id: photoResult.id,
@@ -68,14 +65,11 @@ extension Photo {
 // сервис постраничной загрузки фото для ленты
 final class ImagesListService {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ImagesListService")
-    // уведомление: в photos добавились новые фото
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
 
-    // все загруженные фото и номер последней загруженной страницы
     private(set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
 
-    // текущий запрос (nil — ничего не загружается)
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
 
@@ -85,7 +79,6 @@ final class ImagesListService {
         // Запрос уже идёт — не прерываем его и не создаём новый
         guard task == nil else { return }
 
-        // номер страницы, которую грузим (первая — 1)
         let nextPage = (lastLoadedPage ?? 0) + 1
 
         guard let request = makePhotosRequest(page: nextPage) else {
@@ -98,7 +91,6 @@ final class ImagesListService {
             guard let self else { return }
 
             switch result {
-            // успех: добавляем новые фото в конец и сообщаем подписчикам
             case .success(let photoResults):
                 let newPhotos = photoResults.map { Photo(from: $0) }
                 self.photos.append(contentsOf: newPhotos)
@@ -108,11 +100,9 @@ final class ImagesListService {
                     name: ImagesListService.didChangeNotification,
                     object: self
                 )
-            // ошибка: только логируем, страницу можно будет запросить снова
             case .failure(let error):
                 logger.error("[ImagesListService.fetchPhotosNextPage]: \(type(of: error)) - \(error), page: \(nextPage)")
             }
-            // запрос завершён — можно делать следующий
             self.task = nil
         }
 
@@ -120,7 +110,7 @@ final class ImagesListService {
         task.resume()
     }
 
-    // поставить (POST) или снять (DELETE) лайк с фото
+    // постановка и снятие лайка
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
         assert(Thread.isMainThread)
 
@@ -130,12 +120,10 @@ final class ImagesListService {
             return
         }
 
-        // data(for:) проверяет код 200..<300 и вызывает completion на главном потоке
         let task = urlSession.data(for: request) { [weak self] result in
             guard let self else { return }
 
             switch result {
-            // успех: заменяем фото на копию с противоположным isLiked
             case .success:
                 if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
                     let photo = self.photos[index]
@@ -151,7 +139,6 @@ final class ImagesListService {
                     self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
                 }
                 completion(.success(()))
-            // ошибка: логируем и передаём дальше
             case .failure(let error):
                 self.logger.error("[ImagesListService.changeLike]: \(type(of: error)) - \(error), photoId: \(photoId)")
                 completion(.failure(error))
@@ -160,7 +147,7 @@ final class ImagesListService {
         task.resume()
     }
 
-    // сборка запроса к /photos/{id}/like: POST — поставить лайк, DELETE — снять
+    // запрос для лайка
     private func makeLikeRequest(photoId: String, isLike: Bool) -> URLRequest? {
         guard
             let token = OAuth2TokenStorage.shared.token,
@@ -175,7 +162,7 @@ final class ImagesListService {
         return request
     }
 
-    // сборка GET-запроса к /photos с номером страницы и токеном авторизации
+    // запрос для страницы фото
     private func makePhotosRequest(page: Int) -> URLRequest? {
         guard
             let token = OAuth2TokenStorage.shared.token,

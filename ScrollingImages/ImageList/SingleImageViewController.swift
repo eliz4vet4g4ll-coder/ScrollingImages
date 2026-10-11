@@ -3,14 +3,13 @@ import Kingfisher
 
 // экран полноэкранного просмотра фото
 final class SingleImageViewController: UIViewController {
-    // ссылка на полноразмерное фото, её передаёт лента
     var fullImageURL: URL?
     
     @IBOutlet weak var scrollView: UIScrollView!
     
     @IBOutlet weak var shareButton: UIButton!
     
-    // кнопка «Поделиться»: открываем системное меню отправки картинки
+    // поделиться картинкой
     @IBAction func didTapShareButton(_ sender: Any) {
         guard let image = imageView.image else {return}
         
@@ -21,47 +20,41 @@ final class SingleImageViewController: UIViewController {
     
     @IBOutlet private var imageView: UIImageView!
     
-    // кнопка «Назад»: закрываем экран
+    // возврат назад
     @IBAction func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // пределы масштабирования
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
-        // грузим фото по ссылке
         loadImage()
     }
     
-    // загружаем полноразмерное фото по ссылке, на время загрузки блокируем UI
+    // загрузка полноразмерной картинки
     private func loadImage() {
         guard let fullImageURL else {return}
         
-        // сбрасываем зум и отступы от прошлой попытки (важно при «Повторить»)
         scrollView.setZoomScale(1, animated: false)
         scrollView.contentInset = .zero
         
-        // пока грузится — блокирующий лоадер ProgressHUD
         UIBlockingProgressHUD.show()
         imageView.kf.setImage(with: fullImageURL) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             guard let self else {return}
             switch result {
-            // успех: imageView в реальный размер картинки, затем подгоняем масштаб
             case .success(let imageResult):
                 self.imageView.frame.size = imageResult.image.size
                 self.rescaleAndCenterImageInScrollView(image: imageResult.image)
-            // ошибка: предлагаем повторить загрузку
             case .failure:
                 self.showError()
             }
         }
     }
     
-    // алерт об ошибке загрузки с возможностью повторить
+    // алерт с ошибкой загрузки
     private func showError() {
         let alert = UIAlertController(
             title: nil,
@@ -75,10 +68,8 @@ final class SingleImageViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    // масштаб как aspect fill: фото заполняет экран, края обрезаются (их можно докрутить),
-    // и ставим его по центру
+    // масштабирование и центрирование картинки
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
-        // размер imageView = реальный размер картинки (зум считаем от масштаба 1)
         scrollView.setZoomScale(1, animated: false)
         imageView.frame.size = image.size
         
@@ -95,7 +86,7 @@ final class SingleImageViewController: UIViewController {
         scrollView.layoutIfNeeded()
         let newContentSize = scrollView.contentSize
         
-        // Центрирование
+        // центрирование
         let x = (newContentSize.width - visibleRectSize.width) / 2
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
@@ -106,12 +97,12 @@ final class SingleImageViewController: UIViewController {
 
 // MARK: - UIScrollViewDelegate
 extension SingleImageViewController: UIScrollViewDelegate {
-    // какое view увеличивать жестом
+    // view для зума
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
     
-    // после зума центрируем фото, если оно меньше экрана
+    // центрирование картинки после зума
     func scrollViewDidEndZooming(
         _ scrollView: UIScrollView,
         with view: UIView?,

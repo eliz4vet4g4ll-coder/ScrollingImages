@@ -9,26 +9,45 @@ protocol ImagesListCellDelegate: AnyObject {
 final class ImageListCell: UITableViewCell{
     static let reuseIdentifier = "ImageListCell"
     
-    // делегат (контроллер ленты), weak — чтобы не было цикла сильных ссылок
     weak var delegate: ImagesListCellDelegate?
+    
+    // состояние картинки: загрузка — градиент, готово — фото, ошибка — заглушка
+    var imageState: FeedCellImageState? {
+        didSet {
+            switch imageState {
+            case .loading:
+                imgLabel.image = nil
+                imgLabel.showGradientLoading(cornerRadius: 16)
+            case .finished(let image):
+                imgLabel.hideGradientLoading()
+                imgLabel.image = image
+            case .error:
+                imgLabel.hideGradientLoading()
+                imgLabel.image = UIImage(resource: .loadingPic)
+            case nil:
+                imgLabel.hideGradientLoading()
+                imgLabel.image = nil
+            }
+        }
+    }
     
     @IBOutlet private weak var likeButton: UIButton!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var imgLabel: UIImageView!
     
-    // нажатие на лайк: сообщаем делегату (контроллеру), что по кнопке тапнули
+    // нажатие на лайк
     @IBAction private func likeButtonClicked() {
         delegate?.imageListCellDidTapLike(self)
     }
     
-    // перед переиспользованием ячейки отменяем незавершённую загрузку картинки,
-    // чтобы старое фото не появилось в ячейке с другим фото
+    // отмена загрузки картинки при переиспользовании ячейки
     override func prepareForReuse() {
         super.prepareForReuse()
         imgLabel.kf.cancelDownloadTask()
+        imageState = nil
     }
 
-    // затемнение по краям фото (виньетка)
+    // виньетка
     private let vignetteLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.type = .radial
@@ -42,7 +61,7 @@ final class ImageListCell: UITableViewCell{
         return layer
     }()
 
-    // ставим на кнопку активное или неактивное сердечко
+    // ставит картинку лайка
     func setIsLiked(_ isLiked: Bool) {
         let likeImage: UIImage
         if isLiked {
@@ -54,7 +73,7 @@ final class ImageListCell: UITableViewCell{
         likeButton.setImage(likeImage, for: .normal)
     }
     
-    // разовая настройка после загрузки из storyboard: скругление и виньетка
+    // скругление и виньетка
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -63,7 +82,7 @@ final class ImageListCell: UITableViewCell{
         imgLabel.layer.addSublayer(vignetteLayer)
     }
 
-    // подгоняем размер виньетки под размер фото (без анимации)
+    // размер виньетки под картинку
     override func layoutSubviews() {
         super.layoutSubviews()
         contentView.layoutIfNeeded()

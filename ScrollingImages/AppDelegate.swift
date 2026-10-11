@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        // внешний вид лоадера ProgressHUD: системный спиннер цвета YP Black (#1A1B22) на квадрате цвета YP Background
+        // настройка вида лоадера
         ProgressHUD.animationType = .activityIndicator
         ProgressHUD.colorHUD = .ypBackground
         ProgressHUD.colorAnimation = .ypBlack

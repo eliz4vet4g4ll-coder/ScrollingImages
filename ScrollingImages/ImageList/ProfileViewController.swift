@@ -26,6 +26,7 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         exitButton()
         
         if let profile = profileService.profile {updateProfileDetails(profile: profile)}
+        showLoading()
         
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
@@ -46,7 +47,27 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         else { return }
 
         let placeholder = UIImage(systemName: SystemImages.personCropCircleFill, withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
-        setProfileImage.kf.setImage(with: url, for: .normal, placeholder: placeholder)
+        setProfileImage.kf.setImage(
+            with: url,
+            for: .normal,
+            placeholder: placeholder,
+            completionHandler: { [weak self] _ in
+                self?.hideLoading()
+            }
+        )
+    }
+    
+    // градиенты загрузки поверх аватарки и лейблов
+    private func showLoading() {
+        setProfileImage.showGradientLoading(cornerRadius: 35)
+        nameLabel.showGradientLoading(cornerRadius: 9, minWidth: 223, minHeight: 18)
+        userName.showGradientLoading(cornerRadius: 9, minWidth: 89, minHeight: 18)
+        profileInfo.showGradientLoading(cornerRadius: 9, minWidth: 67, minHeight: 18)
+    }
+    
+    // убирает все градиенты загрузки
+    private func hideLoading() {
+        [setProfileImage, nameLabel, userName, profileInfo].forEach { $0.hideGradientLoading() }
     }
     
     func setUpProfileImage(){
