@@ -72,6 +72,13 @@ final class ProfileService {
         task.resume()
     }
 
+     // сброс данных при выходе из аккаунта
+     func reset() {
+         task?.cancel()
+         task = nil
+         profile = nil
+     }
+
      private func makeProfileRequest(token: String) -> URLRequest? {
          guard let url = URL(string: "https://api.unsplash.com/me") else {
              return nil

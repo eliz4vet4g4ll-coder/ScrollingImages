@@ -63,6 +63,8 @@ final class ImagesListService {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ImagesListService")
     // уведомление: в photos добавились новые фото
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
+    static let shared = ImagesListService()
+    private init() {}
 
     // все загруженные фото и номер последней загруженной страницы
     private(set) var photos: [Photo] = []
@@ -110,6 +112,14 @@ final class ImagesListService {
 
         self.task = task
         task.resume()
+    }
+
+    // сброс данных при выходе из аккаунта
+    func reset() {
+        task?.cancel()
+        task = nil
+        photos = []
+        lastLoadedPage = nil
     }
 
     // поставить (POST) или снять (DELETE) лайк с фото

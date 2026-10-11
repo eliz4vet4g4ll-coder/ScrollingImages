@@ -60,6 +60,13 @@ final class ProfileImageService{
         task.resume()
     }
      
+    // сброс данных при выходе из аккаунта
+    func reset() {
+        task?.cancel()
+        task = nil
+        avatarURL = nil
+    }
+     
     private func makeProfileImageRequest(username: String) -> URLRequest? {
         guard
             let token = OAuth2TokenStorage.shared.token,

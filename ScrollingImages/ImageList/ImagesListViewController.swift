@@ -13,13 +13,13 @@ class ImagesListViewController: UIViewController {
 
 
     // сервис загрузки фото, подписка на его уведомления и фото, которые показывает таблица
-    private let imagesListService = ImagesListService()
+    private let imagesListService = ImagesListService.shared
     private var imagesListServiceObserver: NSObjectProtocol?
     var photos: [Photo] = []
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
+        formatter.dateStyle = .medium
         formatter.timeStyle = .none
         return formatter
     }()
@@ -149,7 +149,9 @@ extension ImagesListViewController: ImagesListCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
         
+        UIBlockingProgressHUD.show()
         imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
             switch result {
             case .success:
                 guard let self else { return }

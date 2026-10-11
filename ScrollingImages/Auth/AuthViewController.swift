@@ -61,7 +61,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 storage.token = token
                 self.delegate?.didAuthenticate(self)
 
-            case .failure(let error):
+            case .failure:
                 self.showAuthErrorAlert()
             }
         }
