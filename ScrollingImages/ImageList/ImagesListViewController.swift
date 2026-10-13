@@ -2,7 +2,7 @@ import UIKit
 import Kingfisher
 
 // экран ленты фотографий
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let placeholderImageName = "loading_pic"
     @IBOutlet private var tableView: UITableView!
