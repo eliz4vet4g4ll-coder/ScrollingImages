@@ -1,15 +1,29 @@
 import UIKit
+import Kingfisher
+
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImageListCell)
+}
 
 final class ImageListCell: UITableViewCell{
     static let reuseIdentifier = "ImageListCell"
     
+    weak var delegate: ImagesListCellDelegate?
     
-    @IBOutlet weak var setLikeButton: UIButton!
-    @IBAction func likeButton(_ sender: Any) {
-    }
+    @IBOutlet private weak var likeButton: UIButton!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var imgLabel: UIImageView!
+    
+    @IBAction private func likeButtonClicked() {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imgLabel.kf.cancelDownloadTask()
+    }
 
+    // затемнение по краям фото (виньетка)
     private let vignetteLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.type = .radial
@@ -23,11 +37,19 @@ final class ImageListCell: UITableViewCell{
         return layer
     }()
 
-    func setLike(isLike: Bool){
-        let likeStatus: ImageResource = isLike ? .favouriteActive : .favouriteNotActive
-        setLikeButton.setImage(UIImage(resource: likeStatus), for: .normal)
+
+    func setIsLiked(_ isLiked: Bool) {
+        let likeImage: UIImage
+        if isLiked {
+            likeImage = UIImage(resource: .favouriteActive)
+        }
+        else {
+            likeImage = UIImage(resource: .favouriteNotActive)
+        }
+        likeButton.setImage(likeImage, for: .normal)
     }
     
+    // разовая настройка после загрузки из storyboard: скругление и виньетка
     override func awakeFromNib() {
         super.awakeFromNib()
         

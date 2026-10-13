@@ -76,10 +76,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         guard !isFetchingProfile else { return }
         isFetchingProfile = true
 
-        UIBlockingProgressHUD.show()
         profileService.fetchProfile(token) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
-
             guard let self else { return }
             self.isFetchingProfile = false
 

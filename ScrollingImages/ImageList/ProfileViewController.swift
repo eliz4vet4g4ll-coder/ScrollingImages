@@ -6,8 +6,6 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
-    private var label: UILabel!
-    
     let imageView = UIImageView()
     let setProfileImage = UIButton()
     
@@ -140,8 +138,9 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
     }
         
     func exitButton(){
+        guard let exitImage = UIImage(systemName: SystemImages.ipadAndArrowForward) else { return }
         let exitButton = UIButton.systemButton(
-            with: UIImage(systemName: SystemImages.ipadAndArrowForward)!,
+            with: exitImage,
             target: self,
             action: #selector(self.didTapButton)
         )
