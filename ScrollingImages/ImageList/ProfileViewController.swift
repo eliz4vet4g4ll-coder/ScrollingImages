@@ -15,6 +15,10 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        nameLabel.accessibilityIdentifier = "Name Lastname"
+        userName.accessibilityIdentifier = "@username"
+        profileInfo.accessibilityIdentifier = "Bio"
+        
         view.backgroundColor = .ypBlack
         setUpProfileImage()
         
@@ -145,6 +149,7 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
             action: #selector(self.didTapButton)
         )
         exitButton.tintColor = .ypRed
+        exitButton.accessibilityIdentifier = "logout button"
         
         exitButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(exitButton)

@@ -47,6 +47,7 @@ final class ImageListCell: UITableViewCell{
             likeImage = UIImage(resource: .favouriteNotActive)
         }
         likeButton.setImage(likeImage, for: .normal)
+        likeButton.accessibilityIdentifier = isLiked ? "like button on" : "like button off"
     }
     
     // разовая настройка после загрузки из storyboard: скругление и виньетка
