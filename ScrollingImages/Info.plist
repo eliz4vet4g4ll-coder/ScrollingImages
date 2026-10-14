@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UnsplashAccessKey</key>
+	<string>$(UNSPLASH_ACCESS_KEY)</string>
+	<key>UnsplashSecretKey</key>
+	<string>$(UNSPLASH_SECRET_KEY)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

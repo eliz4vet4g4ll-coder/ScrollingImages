@@ -25,6 +25,7 @@ extension URLSession {
                 if 200 ..< 300 ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
+                    print(String(data: data, encoding: .utf8) ?? "")
                     print("[URLSession.data]: NetworkError - код ошибки \(statusCode), url: \(request.url?.absoluteString ?? "")")
                     fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
                 }

@@ -48,16 +48,16 @@ final class SplashViewController: UIViewController{
     }
     private func switchToTabBarController() {
         guard let windowScene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first,
-                let window = windowScene.windows.first
+              let window = windowScene.windows.first
         else {
-                assertionFailure("Invalid window configuration")
-                return
-            }
+            assertionFailure("Invalid window configuration")
+            return
+        }
         
         // Создаём экземпляр нужного контроллера из Storyboard с помощью ранее заданного идентификатора
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
-           
+        
         // Установим в `rootViewController` полученный контроллер
         window.rootViewController = tabBarController
     }
@@ -82,7 +82,7 @@ extension SplashViewController: AuthViewControllerDelegate {
 
             switch result {
             case .success(let profile):
-            ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
                 self.switchToTabBarController()
             case .failure(let error):
                 print("Failed to fetch profile: \(error)")
