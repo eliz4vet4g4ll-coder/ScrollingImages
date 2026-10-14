@@ -4,7 +4,7 @@ import ProgressHUD
 protocol AuthViewControllerDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController)
 }
-    
+
 final class AuthViewController: UIViewController{
     weak var delegate: AuthViewControllerDelegate?
     private let oauth2Service = OAuth2Service.shared
@@ -55,8 +55,6 @@ final class AuthViewController: UIViewController{
     }
 }
 
-    
-    
 extension AuthViewController: WebViewViewControllerDelegate {
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
@@ -74,9 +72,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
         }
     }
-        
-        func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-            dismiss(animated: true)
-        }
+    
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+        dismiss(animated: true)
+    }
 }
 

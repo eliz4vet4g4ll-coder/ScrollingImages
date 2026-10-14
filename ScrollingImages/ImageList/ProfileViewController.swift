@@ -6,18 +6,14 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
-    let imageView = UIImageView()
-    let setProfileImage = UIButton()
+    private let setProfileImage = UIButton()
     
-    let nameLabel = UILabel()
-    let userName = UILabel()
-    let profileInfo = UILabel()
+    private let nameLabel = UILabel()
+    private let userName = UILabel()
+    private let profileInfo = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        nameLabel.accessibilityIdentifier = "Name Lastname"
-        userName.accessibilityIdentifier = "@username"
-        profileInfo.accessibilityIdentifier = "Bio"
         
         view.backgroundColor = .ypBlack
         setUpProfileImage()
@@ -51,9 +47,10 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         setProfileImage.kf.setImage(with: url, for: .normal, placeholder: placeholder)
     }
     
-    func setUpProfileImage(){
+    private func setUpProfileImage(){
         let image = UIImage(systemName: SystemImages.personCropCircleFill, withConfiguration: UIImage.SymbolConfiguration(pointSize: 70))
         setProfileImage.setImage(image, for: .normal)
+        setProfileImage.accessibilityIdentifier = AccessibilityIdentifiers.profileImage
         
         setProfileImage.tintColor = .ypGray
         setProfileImage.addTarget(self, action: #selector(didTapPhotoButton), for: .touchUpInside)
@@ -103,10 +100,11 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         present(picker, animated: true)
     }
     
-    func setProfileName(){
+    private func setProfileName(){
         nameLabel.text = "My Name"
         nameLabel.textColor = .ypWhite
         nameLabel.font = .systemFont(ofSize: 23, weight: .bold)
+        nameLabel.accessibilityIdentifier = AccessibilityIdentifiers.nameLabel
         
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(nameLabel)
@@ -115,10 +113,11 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         nameLabel.topAnchor.constraint(equalTo: setProfileImage.bottomAnchor, constant: 8).isActive = true
     }
     
-    func setUserName(){
+    private func setUserName(){
         userName.text = "@my_name"
         userName.textColor = .ypGray
         userName.font = .systemFont(ofSize: 13)
+        userName.accessibilityIdentifier = AccessibilityIdentifiers.userNameLabel
         
         userName.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(userName)
@@ -128,11 +127,11 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         
     }
     
-    func setProfileInfo(){
+    private func setProfileInfo(){
         profileInfo.text = "Info"
         profileInfo.textColor = .ypWhite
         profileInfo.font = .systemFont(ofSize: 13)
-        
+        profileInfo.accessibilityIdentifier = AccessibilityIdentifiers.bioLabel
         
         profileInfo.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(profileInfo)
@@ -141,7 +140,7 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
         profileInfo.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 8).isActive = true
     }
         
-    func exitButton(){
+    private func exitButton(){
         guard let exitImage = UIImage(systemName: SystemImages.ipadAndArrowForward) else { return }
         let exitButton = UIButton.systemButton(
             with: exitImage,
@@ -149,7 +148,7 @@ final class ProfileViewController: UIViewController, PHPickerViewControllerDeleg
             action: #selector(self.didTapButton)
         )
         exitButton.tintColor = .ypRed
-        exitButton.accessibilityIdentifier = "logout button"
+        exitButton.accessibilityIdentifier = AccessibilityIdentifiers.logoutButton
         
         exitButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(exitButton)

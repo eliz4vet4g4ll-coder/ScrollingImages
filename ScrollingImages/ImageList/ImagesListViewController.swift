@@ -8,14 +8,14 @@ final class ImagesListViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
 
     override var preferredStatusBarStyle: UIStatusBarStyle{
-        return .lightContent
+        .lightContent
     }
 
 
     // сервис загрузки фото, подписка на его уведомления и фото, которые показывает таблица
     private let imagesListService = ImagesListService.shared
     private var imagesListServiceObserver: NSObjectProtocol?
-    var photos: [Photo] = []
+    private var photos: [Photo] = []
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -92,13 +92,13 @@ extension ImagesListViewController: UITableViewDataSource, UITableViewDelegate{
 
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photos.count
+        photos.count
     }
 }
 
 // MARK: - Настройка ячейки
 extension ImagesListViewController {
-    func configCell(for cell: ImageListCell, with indexPath: IndexPath){
+    private func configCell(for cell: ImageListCell, with indexPath: IndexPath){
         let photo = photos[indexPath.row]
 
         cell.imgLabel.kf.indicatorType = .activity

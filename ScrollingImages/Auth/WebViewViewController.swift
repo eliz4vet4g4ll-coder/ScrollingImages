@@ -10,7 +10,7 @@ protocol WebViewViewControllerDelegate: AnyObject {
 }
 
 
-public protocol WebViewViewControllerProtocol: AnyObject {
+protocol WebViewViewControllerProtocol: AnyObject {
     var presenter: WebViewPresenterProtocol? { get set }
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
@@ -21,13 +21,13 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     weak var delegate: WebViewViewControllerDelegate?
     var presenter: WebViewPresenterProtocol?
 
-    @IBOutlet weak var webView: WKWebView!
-    let progressView = UIProgressView()
+    @IBOutlet private weak var webView: WKWebView!
+    private let progressView = UIProgressView()
     private var estimatedProgressObservation: NSKeyValueObservation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        webView.accessibilityIdentifier = "UnsplashWebView"
+        webView.accessibilityIdentifier = AccessibilityIdentifiers.unsplashWebView
         
         webView.navigationDelegate = self
         
@@ -55,7 +55,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         progressView.isHidden = isHidden
     }
     
-    func setProgressView(){
+    private func setProgressView(){
         progressView.tintColor = .ypBackground
         progressView.progress = 0.5
         
@@ -63,16 +63,16 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         view.addSubview(progressView)
         
         progressView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor
-            ).isActive = true
-            
-            progressView.leadingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.leadingAnchor
-            ).isActive = true
-            
-            progressView.trailingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.trailingAnchor
-            ).isActive = true
+            equalTo: view.safeAreaLayoutGuide.topAnchor
+        ).isActive = true
+        
+        progressView.leadingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.leadingAnchor
+        ).isActive = true
+        
+        progressView.trailingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor
+        ).isActive = true
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -3,10 +3,12 @@ import XCTest
 
 final class WebViewTests: XCTestCase {
 
-    func testViewControllerCallsViewDidLoad() {
+    func testViewControllerCallsViewDidLoad() throws {
         //given
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let viewController = storyboard.instantiateViewController(withIdentifier: "WebViewViewController") as! WebViewViewController
+        let viewController = try XCTUnwrap(
+            storyboard.instantiateViewController(withIdentifier: "WebViewViewController") as? WebViewViewController
+        )
         let presenter = WebViewPresenterSpy()
         viewController.presenter = presenter
         presenter.view = viewController
@@ -65,7 +67,7 @@ final class WebViewTests: XCTestCase {
         let authHelper = AuthHelper(configuration: configuration)
 
         //when
-        let url = authHelper.authURL()
+        let url = authHelper.authURL
 
         guard let urlString = url?.absoluteString else {
             XCTFail("Auth URL is nil")
@@ -80,15 +82,15 @@ final class WebViewTests: XCTestCase {
         XCTAssertTrue(urlString.contains(configuration.accessScope))
     }
 
-    func testCodeFromURL() {
+    func testCodeFromURL() throws {
         //given
-        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native")!
+        var urlComponents = try XCTUnwrap(URLComponents(string: "https://unsplash.com/oauth/authorize/native"))
         urlComponents.queryItems = [URLQueryItem(name: "code", value: "test code")]
-        let url = urlComponents.url!
+        let url = try XCTUnwrap(urlComponents.url)
         let authHelper = AuthHelper()
 
         //when
-        let code = authHelper.code(from: url)
+        let code = authHelper.getCode(from: url)
 
         //then
         XCTAssertEqual(code, "test code")

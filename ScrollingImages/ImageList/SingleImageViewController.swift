@@ -5,22 +5,22 @@ import Kingfisher
 final class SingleImageViewController: UIViewController {
     var fullImageURL: URL?
     
-    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet private weak var scrollView: UIScrollView!
     
-    @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet private weak var shareButton: UIButton!
     
-    @IBAction func didTapShareButton(_ sender: Any) {
+    @IBAction private func didTapShareButton(_ sender: Any) {
         guard let image = imageView.image else {return}
         
         let sharePic = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         
         present(sharePic, animated: true)
-        }
+    }
     
     @IBOutlet private var imageView: UIImageView!
     
     // кнопка «Назад»: закрываем экран
-    @IBAction func didTapBackButton(_ sender: Any) {
+    @IBAction private func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
@@ -96,7 +96,7 @@ final class SingleImageViewController: UIViewController {
 extension SingleImageViewController: UIScrollViewDelegate {
     // какое view увеличивать жестом
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
+        imageView
     }
     
     // после зума центрируем фото, если оно меньше экрана

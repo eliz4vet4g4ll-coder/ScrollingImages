@@ -1,4 +1,4 @@
-import ScrollingImages
+@testable import ScrollingImages
 import Foundation
 
 final class WebViewPresenterSpy: WebViewPresenterProtocol {
@@ -9,11 +9,7 @@ final class WebViewPresenterSpy: WebViewPresenterProtocol {
         viewDidLoadCalled = true
     }
 
-    func didUpdateProgressValue(_ newValue: Double) {
+    func didUpdateProgressValue(_ newValue: Double) {}
 
-    }
-
-    func code(from url: URL) -> String? {
-        return nil
-    }
+    func code(from url: URL) -> String? { nil }
 }

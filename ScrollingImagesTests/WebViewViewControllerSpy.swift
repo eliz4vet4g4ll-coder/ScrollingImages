@@ -1,4 +1,4 @@
-import ScrollingImages
+@testable import ScrollingImages
 import Foundation
 
 final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
@@ -9,11 +9,7 @@ final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
         loadRequestCalled = true
     }
 
-    func setProgressValue(_ newValue: Float) {
+    func setProgressValue(_ newValue: Float) {}
 
-    }
-
-    func setProgressHidden(_ isHidden: Bool) {
-
-    }
+    func setProgressHidden(_ isHidden: Bool) {}
 }

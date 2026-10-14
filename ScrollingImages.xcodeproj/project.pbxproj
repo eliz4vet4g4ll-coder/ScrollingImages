@@ -35,6 +35,7 @@
 		A0811818301CB6E900F04B8A /* ScrollingImagesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollingImagesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0811822301CB6E900F04B8A /* ScrollingImagesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollingImagesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08E34E9306955250001D294 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		A0C0FFEE0000000000000001 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,6 +46,13 @@
 			);
 			target = A08117FE301CB6E700F04B8A /* ScrollingImages */;
 		};
+		A0C0FFEE0000000000000002 /* Exceptions for "ScrollingImages" folder in "ScrollingImagesUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AccessibilityIdentifiers.swift,
+			);
+			target = A0811821301CB6E900F04B8A /* ScrollingImagesUITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +60,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				A081182A301CB6E900F04B8A /* Exceptions for "ScrollingImages" folder in "ScrollingImages" target */,
+				A0C0FFEE0000000000000002 /* Exceptions for "ScrollingImages" folder in "ScrollingImagesUITests" target */,
 			);
 			path = ScrollingImages;
 			sourceTree = "<group>";
@@ -100,6 +109,7 @@
 		A08117F6301CB6E700F04B8A = {
 			isa = PBXGroup;
 			children = (
+				A0C0FFEE0000000000000001 /* Secrets.xcconfig */,
 				A0811801301CB6E700F04B8A /* ScrollingImages */,
 				A081181B301CB6E900F04B8A /* ScrollingImagesTests */,
 				A0811825301CB6E900F04B8A /* ScrollingImagesUITests */,
@@ -313,6 +323,7 @@
 /* Begin XCBuildConfiguration section */
 		A081182C301CB6E900F04B8A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A0C0FFEE0000000000000001 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -347,6 +358,7 @@
 		};
 		A081182D301CB6E900F04B8A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A0C0FFEE0000000000000001 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

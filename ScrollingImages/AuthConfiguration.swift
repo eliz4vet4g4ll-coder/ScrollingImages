@@ -1,13 +1,24 @@
 import Foundation
 
 enum Constants {
-    static let accessKey = "NbX_mACk0zkIBLt04JKDLQDkXo3QVWEeIwr5pZcJ6_c"
-    static let secretKey = "jiiiNevo_qvtBDVZFc3oyWrhnGzywEkMiGou6shvN2Q"
+    static let accessKey = infoValue(forKey: "UnsplashAccessKey")
+    static let secretKey = infoValue(forKey: "UnsplashSecretKey")
     static let redirectURI = "urn:ietf:wg:oauth:2.0:oob"
     static let accessScope = "public+read_user+write_likes"
-
+    
     static let defaultBaseURLString = "https://api.unsplash.com"
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    
+    // ключи попадают в Info.plist из Secrets.xcconfig
+    private static func infoValue(forKey key: String) -> String {
+        guard
+            let value = Bundle.main.object(forInfoDictionaryKey: key) as? String,
+            !value.isEmpty
+        else {
+            fatalError("Не найден ключ \(key) в Info.plist. Создайте Secrets.xcconfig по образцу Secrets.example.xcconfig")
+        }
+        return value
+    }
 }
 
 struct AuthConfiguration {
@@ -17,22 +28,13 @@ struct AuthConfiguration {
     let accessScope: String
     let defaultBaseURLString: String
     let authURLString: String
-
-    init(accessKey: String, secretKey: String, redirectURI: String, accessScope: String, authURLString: String, defaultBaseURLString: String) {
-        self.accessKey = accessKey
-        self.secretKey = secretKey
-        self.redirectURI = redirectURI
-        self.accessScope = accessScope
-        self.defaultBaseURLString = defaultBaseURLString
-        self.authURLString = authURLString
-    }
-
+    
     static var standard: AuthConfiguration {
-        return AuthConfiguration(accessKey: Constants.accessKey,
-                                 secretKey: Constants.secretKey,
-                                 redirectURI: Constants.redirectURI,
-                                 accessScope: Constants.accessScope,
-                                 authURLString: Constants.unsplashAuthorizeURLString,
-                                 defaultBaseURLString: Constants.defaultBaseURLString)
+        AuthConfiguration(accessKey: Constants.accessKey,
+                          secretKey: Constants.secretKey,
+                          redirectURI: Constants.redirectURI,
+                          accessScope: Constants.accessScope,
+                          defaultBaseURLString: Constants.defaultBaseURLString,
+                          authURLString: Constants.unsplashAuthorizeURLString)
     }
 }
